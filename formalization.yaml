@@ -58,7 +58,11 @@ related_formalizations:
     note: "The same author's Häggkvist–Janssen entry on the list chromatic index of complete graphs."
 
 status:
-  scope: "Proved for every finite simple graph, every n, and all finite preference instances."
+  scope: >-
+    Galvin's theorem is proved for every finite bipartite simple graph (`G.Colorable 2`) with
+    lists of at least Δ(G) colours over any colour type; the Dinitz statement for every n and
+    every n × n array of lists of size at least n; the Gale–Shapley theorem for all finite
+    preference instances with strict (injective) rankings and any acceptability relation.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
