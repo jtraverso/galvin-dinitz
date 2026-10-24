@@ -1,0 +1,24 @@
+name: Lean verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: "true"
+          build-args: "--wfail"
+      - name: Compile independent Challenge
+        run: lake build Challenge
+      - name: Audit all nine results and boundary cases
+        run: lake env lean Audit.lean

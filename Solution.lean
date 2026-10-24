@@ -5,7 +5,9 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import Mathlib.Combinatorics.SimpleGraph.LineGraph
+public import GalvinMultigraph
 public import GalvinLib.Galvin
 
 /-!

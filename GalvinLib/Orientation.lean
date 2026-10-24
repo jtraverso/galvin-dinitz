@@ -7,6 +7,7 @@ module
 
 public import GalvinLib.GaleShapley
 public import GalvinLib.Kernel
+public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
 # Galvin's orientation of the line graph of a bipartite graph

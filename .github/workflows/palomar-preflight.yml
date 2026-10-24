@@ -1,6 +1,9 @@
 name: Palomar mechanical preflight
 
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
     inputs:
       commit:
@@ -13,12 +16,12 @@ permissions:
 
 jobs:
   preflight:
-    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@c02bbeaed888df45c4e28c4e99dba540ad21552a
     with:
       repository: jtraverso/galvin-dinitz
-      commit: ${{ inputs.commit }}
-      pipeline_commit: d4e41c1d5b0d114c4859e6e5831dc6d3ad1d0d44
-      request_id: galvindinitz
+      commit: ${{ inputs.commit || github.event.pull_request.head.sha || github.sha }}
+      pipeline_commit: c02bbeaed888df45c4e28c4e99dba540ad21552a
+      request_id: galvinmulti1
       mode: full
       execution_profile: palomar-standard-v1
       options: '{"comparator_config_path": "comparator.json", "authorization_relationship": "I am a responsible author or maintainer"}'

@@ -112,3 +112,66 @@ abbrev Coloring (α : Type v) := G →g completeGraph α
 /-- Whether a graph can be colored by at most `n` colors. -/
 def Colorable (n : ℕ) : Prop := Nonempty (G.Coloring (Fin n))
 ```
+
+
+## Definitions additionally used by the multigraph extension
+
+The edge endpoint representation, `Proper` and `maxDegree` are given in full in
+`Challenge.lean`. Fibers count distinct edge identifiers even for parallel edges.
+`Nat.card` below is used only for finite edge subtypes in compared statements.
+
+### Nat.card
+
+`Mathlib/SetTheory/Cardinal/Finite.lean:34` at Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`:
+
+```lean
+
+universe u v
+
+namespace Nat
+
+/-- `Nat.card α` is the cardinality of `α` as a natural number.
+  If `α` is infinite, `Nat.card α = 0`. -/
+protected def card (α : Type*) : ℕ :=
+  toNat (mk α)
+```
+
+### Finset.sup
+
+`Mathlib/Data/Finset/Lattice/Fold.lean:38` at Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`:
+
+```lean
+
+-- TODO: define with just `[Bot α]` where some lemmas hold without requiring `[OrderBot α]`
+variable [SemilatticeSup α] [OrderBot α]
+
+/-- Supremum of a finite set: `sup {a, b, c} f = f a ⊔ f b ⊔ f c` -/
+@[to_dual /-- Infimum of a finite set: `inf {a, b, c} f = f a ⊓ f b ⊓ f c` -/]
+def sup (s : Finset β) (f : β → α) : α :=
+  s.fold (· ⊔ ·) ⊥ f
+
+```
+
+### Finset.card
+
+`Mathlib/Data/Finset/Card.lean:42` at Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`:
+
+```lean
+variable {s t : Finset α} {a b c : α}
+
+/-- `s.card` is the number of elements of `s`, aka its cardinality.
+
+The notation `#s` can be accessed in the `Finset` locale. -/
+def card (s : Finset α) : ℕ :=
+  Multiset.card s.1
+```
+
+### Fintype.card
+
+`Mathlib/Data/Fintype/Card.lean:39` at Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`:
+
+```lean
+/-- `card α` is the number of elements in `α`, defined when `α` is a fintype. -/
+def card (α) [Fintype α] : ℕ :=
+  (@univ α _).card
+```
