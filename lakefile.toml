@@ -1,6 +1,6 @@
 name = "galvin_dinitz"
 version = "0.1.0"
-defaultTargets = ["LeanPool", "Konig", "GalvinLib", "Challenge", "Solution"]
+defaultTargets = ["GalvinMultigraph", "Solution"]
 requiresModuleSystem = true
 
 [leanOptions]
@@ -9,25 +9,23 @@ weak.linter.mathlibStandardSet = true
 
 [[require]]
 name = "mathlib"
-scope = "leanprover-community"
+git = "https://github.com/leanprover-community/mathlib4.git"
 rev = "v4.35.0-rc3"
 
 [[lean_lib]]
-name = "LeanPool"
-globs = ["LeanPool.+"]
-
-[[lean_lib]]
-name = "Konig"
-globs = ["Konig.+"]
+name = "GalvinMultigraph"
 
 [[lean_lib]]
 name = "GalvinLib"
-globs = ["GalvinLib.+"]
 
 [[lean_lib]]
-name = "Challenge"
-roots = ["Challenge"]
+name = "Konig"
+
+[[lean_lib]]
+name = "LeanPool"
 
 [[lean_lib]]
 name = "Solution"
-roots = ["Solution"]
+
+[[lean_lib]]
+name = "Challenge"

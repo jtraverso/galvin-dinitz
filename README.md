@@ -1,72 +1,118 @@
-# Galvin's theorem, the Dinitz problem and stable matchings in Lean 4
+# Galvin's theorem for bipartite multigraphs, Dinitz and stable matchings
 
-Author and maintainer: **Juan Pablo Traverso Gianini**. Licence: Apache-2.0 (see `LICENSE`).
+Author and maintainer: **Juan Pablo Traverso Gianini**. License: Apache-2.0.
 
-All statements are in the namespace `ListEdgeColouring`:
+This extension removes the simple-graph restriction from the Galvin development
+registered as [PALOMAR-2026-10-18-000029, version 1](https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-18-000029&version=1).
+The previous Gale–Shapley, simple-graph Galvin and Dinitz statements and their
+proofs are retained. The multigraph extension has not yet been registered.
 
-1. `gale_shapley`, **Gale–Shapley (1962)**. For finite sets `M`, `W`, an acceptability relation
-   `E ⊆ M × W` and strict preferences (injective rank functions), there is a *stable matching*: a
-   matching `μ ⊆ E` such that every acceptable pair `(m, w)` outside `μ` is blocked, i.e. `m` is
-   matched to someone it prefers to `w`, or `w` is matched to someone it prefers to `m`.
-2. `galvin`, **Galvin's theorem (1995)**. The list chromatic index of a finite bipartite graph is
-   its maximum degree: if every edge has a list of at least `Δ(G)` colours, there is a proper edge
-   colouring (a colouring of Mathlib's `SimpleGraph.lineGraph`) choosing every colour from the list
-   of its edge.
-3. `dinitz`, **the Dinitz problem** (solved by Galvin). If every cell of an `n × n` array has a
-   list of at least `n` symbols, one can choose a symbol from each list so that the symbols in each
-   row and in each column are distinct.
+Galvin's classical theorem says that finite bipartite multigraphs can be
+properly edge-colored from arbitrary finite lists of at least the maximum
+degree. In particular their list chromatic index and ordinary chromatic index
+both equal their maximum degree. This resolves the bipartite case of the list
+edge-coloring conjecture and the Dinitz problem. The research audience includes
+graph coloring, matching theory and combinatorics. No new mathematics or
+priority among formalizations is claimed.
 
-Mathlib has line graphs, colourings and Hall's theorem, but none of these results.
+## Multigraph interface
 
-## Files
+The edge type `E` contains **edge identifiers**. The endpoint maps `a : E → A`
+and `b : E → B` locate each edge on its two sides. The vertex set is understood
+as the disjoint union `A ⊕ B`, so loops are excluded. Neither the endpoint maps
+nor their pairing is required to be injective. Distinct identifiers with the
+same two endpoints are parallel edges and must receive distinct colors.
 
-- [`Challenge.lean`](Challenge.lean): the audited statements. It imports only Mathlib.
-- [`Solution.lean`](Solution.lean) and [`GalvinLib/`](GalvinLib): the proofs.
-- [`Konig/Basic.lean`](Konig/Basic.lean) and [`LeanPool/`](LeanPool): Kőnig's edge-colouring
-  theorem `χ′ = Δ` for bipartite graphs (and the Vizing machinery it uses), reused unchanged from
-  the registered entry
-  [PALOMAR-2026-10-15-000019](https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-15-000019&version=1)
-  ([jtraverso/konig-edge-colouring](https://github.com/jtraverso/konig-edge-colouring) @ 7c60f7e).
-- [`comparator.json`](comparator.json): the theorems that are compared.
-- [`MATHLIB_DEFINITIONS.md`](MATHLIB_DEFINITIONS.md): verbatim copies of the Mathlib definitions
-  used.
-- [`formalization.yaml`](formalization.yaml): provenance, sources and process.
+`GalvinMultigraph.Proper a b c` says that distinct edges sharing either endpoint
+have different colors. `GalvinMultigraph.maxDegree` is the maximum of the
+cardinalities of the endpoint fibers, counting all parallel edges. These
+definitions appear in full in the independent `Challenge.lean`. `Nat.card`
+counts a finite subtype; every compared statement using these counts assumes
+finiteness of `E`. Both sides may contain isolated vertices or be empty.
 
-## How the proofs go
+## Compared results
 
-* **Gale–Shapley** (`GaleShapley.lean`), by strong induction on the number of acceptable pairs.
-  If no two elements of `M` have the same favourite, matching each to its favourite is stable.
-  Otherwise two of them share a favourite `w`; delete the pair that `w` likes less and take a
-  stable matching of the smaller instance, which remains stable for the original one.
-* **Kernel lemma** (`Kernel.lean`). If every set of vertices of a digraph has a kernel (an
-  independent set into which every other vertex of the set has an arc), and every list is longer
-  than the out-degree of its vertex, there is a proper colouring from the lists: colour a kernel
-  of the vertices whose list contains a given colour, remove it, and induct.
-* **Galvin** (`Orientation.lean`). Take a proper `Δ`-edge-colouring `φ` (Kőnig) and a bipartition
-  `A ∪ B`. Orient two edges meeting at `w` from the larger colour to the smaller one if `w ∈ A`,
-  and from the smaller to the larger if `w ∈ B`. Each out-degree is at most `Δ − 1`, and every set
-  of edges has a kernel: a stable matching in which `A`-vertices prefer smaller colours and
-  `B`-vertices prefer larger ones.
-* **Dinitz.** Apply Galvin's theorem to `K_{n,n}`, whose maximum degree is `n`.
+The original declarations remain in namespace `ListEdgeColouring`:
 
-## Sources
+- `gale_shapley`: stable matchings with strict preferences and incomplete acceptability.
+- `galvin`: list edge coloring of finite bipartite simple graphs.
+- `dinitz`: choosing symbols with distinct rows and columns from an n × n array of lists.
 
-* F. Galvin, *The list chromatic index of a bipartite multigraph*, J. Combin. Theory Ser. B 63
-  (1995) 153–158, doi:10.1006/jctb.1995.1011.
-* D. Gale, L. S. Shapley, *College admissions and the stability of marriage*, Amer. Math. Monthly
-  69 (1962) 9–15, doi:10.1080/00029890.1962.11989827.
+Six additional declarations are in namespace `GalvinMultigraph`:
 
-## Authorship and use of AI
+| Declaration | Content |
+| --- | --- |
+| `galvin_of_degree_bound` | Lists of size at least k suffice when every incidence degree is at most k. |
+| `galvin` | Lists of size at least the actual maximum multidegree suffice. |
+| `konig` | A proper ordinary edge coloring with exactly Δ available colors exists. |
+| `degree_bounds_of_proper` | Any finite palette supporting a proper coloring has size at least each incidence degree. |
+| `maxDegree_le_of_proper` | Any such palette has size at least Δ. |
+| `colorable_iff` | A proper edge coloring into `Fin k` exists exactly when Δ ≤ k. |
 
-The author chose the results. The statements and proof plan were written with Claude in Claude
-Code. Harmonic's Aristotle produced the proofs, which were audited and rebuilt locally. Lean
-checks everything mechanically. See `formalization.yaml`.
+The list colors may belong to an arbitrary type. Empty edge sets and Δ = 0 are
+included. The lower bounds plus the list-coloring theorem establish optimality
+of the list-size threshold; no separate numerical definition of the list
+chromatic index is introduced. The interface uses endpoint maps rather than
+Mathlib's newer `Graph` structure. No restriction on parallel multiplicities
+is imposed.
 
-## Building
+## Proof and reuse
 
-Lean `v4.35.0-rc3`, Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`:
+The original proof library is retained from commit
+`0aa98fc17e1e96ec408f7bad3198ce37a08d26fc`. Its proof bodies are unchanged;
+aggregate Mathlib imports in three Galvin modules are narrowed and the finite
+interval import is made explicit. The Kőnig/Vizing library is retained as well.
 
-```bash
+The extension reduces to the existing simple-graph theorem. First shrink each
+edge list to a palette of exactly k colors. For every edge identifier insert
+a separate copy of `K_{k,k}` with its `(0,0)` edge removed, and connect the two
+deficient vertices to the original endpoints. Original degrees are unchanged
+and every inserted degree is at most k. Apply the existing Galvin theorem to
+this simple bipartite graph, giving every gadget edge its original edge's palette.
+
+The decisive lemma is `Gadget.terminal_agreement`: the two terminal edges of a
+gadget have the same color. To prove it, complete its k × k array at `(0,0)`
+with one terminal color. Every row uses the entire k-element palette, and each
+column other than zero has distinct colors. If the two terminal colors differed,
+locating the other terminal color in each row would give an injective map from
+`Fin k` to itself avoiding zero, contradicting finite surjectivity. Terminal
+colors therefore descend to a proper coloring of the original multigraph.
+Empty edge sets are handled before constructing gadgets, covering k = 0.
+
+This is a reduction built on the existing formalization, not a claim that the
+multigraph proof follows the original paper line by line. The retained simple
+case uses stable matchings, the kernel lemma, Galvin's orientation and Kőnig's theorem.
+
+## Build and check
+
+Lean `v4.35.0-rc3`; Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`.
+
+```sh
 lake exe cache get
-lake build
+lake build --wfail
+lake build Challenge
+lake env lean Audit.lean
+lake comparator --config comparator.json
 ```
+
+`Challenge.lean` imports only Mathlib and has nine intentional statement
+placeholders. `Solution.lean` never imports it. Comparator compares all nine
+theorems and their transitive definitions, rejects `sorryAx` in the proofs,
+and requires both Lean and NanoDa kernel acceptance. Only `propext`,
+`Classical.choice` and `Quot.sound` are permitted. See `VERIFICATION.md`.
+
+## Sources and production
+
+- F. Galvin, *The list chromatic index of a bipartite multigraph*, JCTB 63 (1995),
+  153–158, [doi:10.1006/jctb.1995.1011](https://doi.org/10.1006/jctb.1995.1011).
+- D. Gale and L. S. Shapley, *College admissions and the stability of marriage*,
+  American Mathematical Monthly 69 (1962), 9–15,
+  [doi:10.1080/00029890.1962.11989827](https://doi.org/10.1080/00029890.1962.11989827).
+
+The previous development reports proofs produced by Harmonic's Aristotle with
+planning, integration and review in Claude Code. OpenAI Codex developed the
+multigraph reduction, proofs, boundary checks and updated packaging under the
+author's direction. No new Aristotle run was used for the extension. Its
+checks and self-assessment were performed in the same session that wrote it;
+no independent human mathematical review of the extension has been performed.
+The detailed structured provenance is in `formalization.yaml`.

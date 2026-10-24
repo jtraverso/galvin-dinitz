@@ -1,145 +1,173 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
-version: "v0.4"
-
+version: v0.4
 project:
-  name: "Galvin's theorem, the Dinitz problem and stable matchings"
-  description: >-
-    A Lean 4 / Mathlib formalization of Galvin's theorem that the list chromatic index of a finite
-    bipartite graph equals its maximum degree (if every edge has a list of at least Δ colours, a
-    proper edge colouring can be chosen from the lists), of its corollary solving the Dinitz
-    problem (an n × n array with lists of n symbols per cell admits a choice with distinct symbols
-    in every row and column), and of the Gale–Shapley theorem on the existence of stable matchings
-    with strict preferences and incomplete acceptability lists, which provides the kernels in
-    Galvin's argument. Mathlib has line graphs and colourings but none of these results.
+  name: Galvin's theorem for bipartite multigraphs, the Dinitz problem and stable matchings
+  description: 'A Lean 4 / Mathlib formalization of Galvin’s theorem for finite bipartite multigraphs:
+    every assignment of finite edge lists of size at least the maximum incidence degree admits a proper
+    edge coloring, with parallel edges counted separately. It includes ordinary edge coloring with Δ
+    colors and the matching lower bound. The previously registered simple-graph Galvin theorem, Dinitz
+    problem and Gale–Shapley stable matching theorem are retained.'
   authors:
-    - "Juan Pablo Traverso Gianini"
-  license: "Apache-2.0"
+  - Juan Pablo Traverso Gianini
+  license: Apache-2.0
   responsible_maintainers:
-    - "Juan Pablo Traverso Gianini"
-
+  - Juan Pablo Traverso Gianini
 classification:
-  arxiv: ["math.CO"]
-  msc2020: ["05C15", "05C70", "91B68"]
-
+  arxiv:
+  - math.CO
+  msc2020:
+  - 05C15
+  - 05C70
+  - 91B68
 sources:
-  - title: "The List Chromatic Index of a Bipartite Multigraph"
-    authors:
-      - "F. Galvin"
-    id: "doi:10.1006/jctb.1995.1011"
-    type: "paper"
-    location: "Journal of Combinatorial Theory, Series B 63 (1995), 153–158"
-    relationship: "formalizes"
-    note: >-
-      The list chromatic index of a bipartite graph equals its maximum degree (for simple graphs;
-      the multigraph case is not formalized), and the resulting solution of the Dinitz problem.
-    license: "all rights reserved"
-    author_endorsement: "n/a"
-  - title: "College Admissions and the Stability of Marriage"
-    authors:
-      - "D. Gale"
-      - "L. S. Shapley"
-    id: "doi:10.1080/00029890.1962.11989827"
-    type: "paper"
-    location: "The American Mathematical Monthly 69 (1962), 9–15"
-    relationship: "formalizes"
-    note: "Existence of stable matchings (here with incomplete acceptability relations)."
-    license: "all rights reserved"
-    author_endorsement: "n/a"
-
+- title: The List Chromatic Index of a Bipartite Multigraph
+  authors:
+  - F. Galvin
+  id: doi:10.1006/jctb.1995.1011
+  type: paper
+  location: Journal of Combinatorial Theory, Series B 63 (1995), 153–158
+  relationship: formalizes
+  note: Galvin’s finite bipartite multigraph list-edge-coloring theorem, its simple-graph case and the
+    Dinitz consequence. The multigraph extension is derived by a palette-synchronizing simple-graph
+    gadget reduction to the previously formalized simple case, rather than by transcribing the paper’s
+    proof.
+  license: all rights reserved
+  author_endorsement: n/a
+- title: College Admissions and the Stability of Marriage
+  authors:
+  - D. Gale
+  - L. S. Shapley
+  id: doi:10.1080/00029890.1962.11989827
+  type: paper
+  location: The American Mathematical Monthly 69 (1962), 9–15
+  relationship: formalizes
+  note: Existence of stable matchings (here with incomplete acceptability relations).
+  license: all rights reserved
+  author_endorsement: n/a
 related_formalizations:
-  - id: "PALOMAR-2026-10-15-000019 (jtraverso/konig-edge-colouring)"
-    relationship: "builds-on"
-    note: >-
-      The same author's Kőnig entry; `Konig/Basic.lean` and `LeanPool/` (commit 7c60f7e) are
-      included unchanged and give the proper Δ-edge-colouring of a bipartite graph used to orient
-      its line graph.
-  - id: "PALOMAR-2026-10-15-000003 (jtraverso/haggkvist-janssen)"
-    relationship: "independent"
-    note: "The same author's Häggkvist–Janssen entry on the list chromatic index of complete graphs."
-
+- id: PALOMAR-2026-10-18-000029-v1
+  relationship: builds-on
+  note: This extends the same author’s galvin-dinitz development at 0aa98fc17e1e96ec408f7bad3198ce37a08d26fc.
+    All three original compared statements are retained. Proof bodies of the original library are preserved;
+    aggregate imports are narrowed and a finite interval import is made explicit. The new gadget proof
+    derives the multigraph case from the original simple case.
+- id: PALOMAR-2026-10-15-000019 (jtraverso/konig-edge-colouring)
+  relationship: builds-on
+  note: The same author's Kőnig entry; `Konig/Basic.lean` and `LeanPool/` (commit 7c60f7e) are included
+    unchanged and give the proper Δ-edge-colouring of a bipartite graph used to orient its line graph.
+- id: PALOMAR-2026-10-15-000003 (jtraverso/haggkvist-janssen)
+  relationship: independent
+  note: The same author's Häggkvist–Janssen entry on the list chromatic index of complete graphs.
 status:
-  scope: >-
-    Galvin's theorem is proved for every finite bipartite simple graph (`G.Colorable 2`) with
-    lists of at least Δ(G) colours over any colour type; the Dinitz statement for every n and
-    every n × n array of lists of size at least n; the Gale–Shapley theorem for all finite
-    preference instances with strict (injective) rankings and any acceptability relation.
+  scope: 'Nine compared theorems: the three retained simple-graph/stable-matching/Dinitz results, plus
+    six multigraph results in GalvinMultigraph. Multigraphs are represented by finite edge identifiers
+    and endpoint maps to the two finite sides. No endpoint-pair injectivity is assumed. Degrees count
+    identifiers with multiplicity. Lists are finite sets over any color type. Empty edge sets, empty
+    sides and zero maximum degree are included. No full coverage of every assertion in the source papers
+    is claimed. The sorry counts refer to Solution proofs; Challenge has nine intentional theorem placeholders
+    and no definition holes.'
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
-
 automation:
   methods:
-    - method: "autonomous"
-      models: ["Aristotle (Harmonic)"]
-      framework: "Aristotle CLI"
-      tool_setup: >-
-        Produced all proofs in one run from the formal statements and a proof plan (Gale–Shapley,
-        kernel lemma, Galvin's orientation from a Kőnig colouring, Dinitz via K_{n,n}) on top of
-        the existing Kőnig library; the return was audited (statements and headers unchanged,
-        libraries unchanged, no added axioms) and rebuilt locally.
-      cost:
-        wall_time: "about one hour"
-        spend_usd: "not tracked"
-        hardware: "API-only"
-      prompting_notes: "Formal statements and proof plan supplied."
-    - method: "agent"
-      models: ["Claude Opus 5.5"]
-      framework: "Claude Code (Anthropic)"
-      tool_setup: >-
-        Statement design, proof plan, integration and review of the Aristotle return, and the
-        Palomar packaging, checked with `lake build` and `#print axioms` (Lean v4.35.0-rc3,
-        Mathlib c55e6e786f49471c72fbddbec5415808896aec1e).
-      cost:
-        wall_time: "about one hour"
-        spend_usd: "subscription-based"
-        hardware: "local machine"
-      prompting_notes: "Natural-language instructions in Spanish, directed by the author."
-  spend_usd: "subscription-based"
-  notes: >-
-    The results were chosen by the human author; the Lean proofs are AI-generated and
-    mechanically verified (no `sorry`, axioms limited to propext, Classical.choice and Quot.sound,
-    identical elaborated types for the Challenge/Solution pair).
-
+  - method: autonomous
+    models:
+    - Aristotle (Harmonic)
+    framework: Aristotle CLI
+    tool_setup: Produced all proofs in one run from the formal statements and a proof plan (Gale–Shapley,
+      kernel lemma, Galvin's orientation from a Kőnig colouring, Dinitz via K_{n,n}) on top of the existing
+      Kőnig library; the return was audited (statements and headers unchanged, libraries unchanged,
+      no added axioms) and rebuilt locally.
+    cost:
+      wall_time: about one hour
+      spend_usd: not tracked
+      hardware: API-only
+    prompting_notes: Formal statements and proof plan supplied.
+  - method: agent
+    models:
+    - Claude Opus 5.5
+    framework: Claude Code (Anthropic)
+    tool_setup: Statement design, proof plan, integration and review of the Aristotle return, and the
+      Palomar packaging, checked with `lake build` and `#print axioms` (Lean v4.35.0-rc3, Mathlib c55e6e786f49471c72fbddbec5415808896aec1e).
+    cost:
+      wall_time: about one hour
+      spend_usd: subscription-based
+      hardware: local machine
+    prompting_notes: Natural-language instructions in Spanish, directed by the author.
+  - method: agent
+    framework: OpenAI Codex
+    tool_setup: Developed the multigraph gadget reduction and all new Lean proofs, preserved and rebuilt
+      the existing proof bodies, extended the independent Challenge and Comparator selection, and ran
+      axiom audits, boundary cases, and sandboxed Lean/NanoDa checks. No new Aristotle run was performed
+      for this extension.
+    prompting_notes: Spanish natural-language instructions from the author; the next item in the effort-prioritized
+      backlog.
+  notes: The results were chosen by the human author; the Lean proofs are AI-generated and mechanically
+    verified (no `sorry`, axioms limited to propext, Classical.choice and Quot.sound, identical elaborated
+    types for the Challenge/Solution pair). The first two method entries describe the inherited version-1
+    development and its reported costs. OpenAI Codex wrote the extension; its costs and exact model
+    identifier are not asserted.
 fidelity:
-  divergences: >-
-    Bipartiteness is `G.Colorable 2`; a proper list edge colouring is a colouring of Mathlib's
-    `SimpleGraph.lineGraph` with values in the lists, which are finsets indexed by the edges.
-    Galvin's theorem is formalized for simple graphs only (the original covers multigraphs). In
-    the Gale–Shapley statement, preferences are injective rank functions `M → W → ℕ` and
-    `W → M → ℕ` (smaller is better), matchings are relations contained in E that are injective in
-    both directions, and stability says every acceptable pair outside the matching is blocked by
-    one of its two members being matched to a partner it prefers. The Dinitz statement is phrased
-    directly for an n × n array of finsets.
-
+  divergences: 'For the multigraph extension, edges are distinct identifiers e : E with endpoints a
+    e : A and b e : B, understood in the disjoint vertex union A ⊕ B. The maps need not be injective,
+    so parallel edges are retained and loops excluded. Incidence degrees are Nat.card of endpoint fibers;
+    all compared uses assume finite E. Proper requires distinct incident edges to receive distinct colors.
+    maxDegree is the maximum over both finite sides and is zero on empty edge sets. The general degree-bound
+    theorem assumes only finite A, B and E; the explicit maximum-degree interface carries enumerations
+    of the two sides. The proof reduces to the existing simple theorem via K_{k,k} minus an edge, with
+    lists shrunk to k colors; it is not a direct transcription of the original multigraph argument.
+    The empty-edge case is handled separately. The lower bound and coloring equivalence express the
+    optimal threshold without a separate numerical list-chromatic-index definition. The three original
+    interfaces are retained unchanged in type. No custom axioms or additional hypotheses on edge multiplicity
+    are introduced.'
 review:
-  status: "agent-reviewed"
+  status: self-assessed
   reviewers:
-    - "Claude Opus 5.5 (AI agent in Claude Code, acting for the author)"
-  notes: >-
-    Agent review by Claude Opus 5.5, distinct from the mechanical verification: the agent
-    compared the statements with the cited theorems, checked the encoding of stability and of
-    proper list edge colourings, checked that the Aristotle return left every statement and
-    header and the reused libraries unchanged, and confirmed by `lake build`, `#print axioms` and
-    a comparison of the fully elaborated Challenge and Solution types that the proofs use no
-    `sorry` and only propext, Classical.choice and Quot.sound. The author directed the work and
-    approved the statements. No independent human mathematical review has been performed. The
-    results are classical; no mathematical novelty is claimed.
-
+  - OpenAI Codex (self-assessment of the extension)
+  notes: The same session that wrote the multigraph extension checked its statements, compiled all proof
+    libraries without warnings, ran boundary examples including distinct parallel edges that cannot
+    share one color, and ran Comparator over all nine declarations with Lean and NanoDa acceptance.
+    This is not independent review. No independent human mathematical review of the extension has been
+    performed. The original metadata reports Claude Code review of the inherited version-1 development;
+    that does not constitute a separate review of the extension. No mathematical novelty or formalization
+    priority is claimed.
 alignment:
-  namespace: "ListEdgeColouring"
   statements:
-    - source: "Gale–Shapley (1962): stable matchings exist"
-      lean: "ListEdgeColouring.gale_shapley"
-      module: "Challenge"
-      status: "proved"
-    - source: "Galvin (1995): list chromatic index of a bipartite graph equals Δ"
-      lean: "ListEdgeColouring.galvin"
-      module: "Challenge"
-      status: "proved"
-    - source: "Dinitz problem (Galvin 1995)"
-      lean: "ListEdgeColouring.dinitz"
-      module: "Challenge"
-      status: "proved"
-
-acknowledgements: >-
-  Mathlib and the Lean community; Harmonic's Aristotle.
+  - source: 'Gale–Shapley (1962): stable matchings exist'
+    lean: ListEdgeColouring.gale_shapley
+    module: Challenge
+    status: proved
+  - source: 'Galvin (1995): list chromatic index of a bipartite graph equals Δ'
+    lean: ListEdgeColouring.galvin
+    module: Challenge
+    status: proved
+  - source: Dinitz problem (Galvin 1995)
+    lean: ListEdgeColouring.dinitz
+    module: Challenge
+    status: proved
+  - source: 'Finite bipartite multigraph edge coloring: galvin_of_degree_bound'
+    lean: GalvinMultigraph.galvin_of_degree_bound
+    module: Challenge
+    status: proved
+  - source: 'Finite bipartite multigraph edge coloring: galvin'
+    lean: GalvinMultigraph.galvin
+    module: Challenge
+    status: proved
+  - source: 'Finite bipartite multigraph edge coloring: konig'
+    lean: GalvinMultigraph.konig
+    module: Challenge
+    status: proved
+  - source: 'Finite bipartite multigraph edge coloring: degree_bounds_of_proper'
+    lean: GalvinMultigraph.degree_bounds_of_proper
+    module: Challenge
+    status: proved
+  - source: 'Finite bipartite multigraph edge coloring: maxDegree_le_of_proper'
+    lean: GalvinMultigraph.maxDegree_le_of_proper
+    module: Challenge
+    status: proved
+  - source: 'Finite bipartite multigraph edge coloring: colorable_iff'
+    lean: GalvinMultigraph.colorable_iff
+    module: Challenge
+    status: proved
+acknowledgements: Mathlib and the Lean community; Harmonic's Aristotle.

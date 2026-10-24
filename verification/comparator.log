@@ -1,0 +1,22 @@
+Resolving dependencies
+Building Challenge
+⚠ [1018/1019] Replayed Challenge
+warning: Challenge.lean:41:8: declaration uses `sorry`
+warning: Challenge.lean:53:8: declaration uses `sorry`
+warning: Challenge.lean:62:8: declaration uses `sorry`
+warning: Challenge.lean:87:8: declaration uses `sorry`
+warning: Challenge.lean:97:8: declaration uses `sorry`
+warning: Challenge.lean:104:8: declaration uses `sorry`
+warning: Challenge.lean:110:8: declaration uses `sorry`
+warning: Challenge.lean:117:8: declaration uses `sorry`
+warning: Challenge.lean:123:8: declaration uses `sorry`
+Build completed successfully (1019 jobs).
+Exporting #[Quot, Quot.mk, Quot.lift, Quot.ind, ListEdgeColouring.gale_shapley, ListEdgeColouring.galvin, ListEdgeColouring.dinitz, GalvinMultigraph.galvin_of_degree_bound, GalvinMultigraph.galvin, GalvinMultigraph.konig, GalvinMultigraph.degree_bounds_of_proper, GalvinMultigraph.maxDegree_le_of_proper, GalvinMultigraph.colorable_iff, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce, Nat, String, String.mk, Char, optParam, autoParam, semiOutParam, outParam] from Challenge
+Building Solution
+Build completed successfully (1223 jobs).
+Exporting #[Quot, Quot.mk, Quot.lift, Quot.ind, ListEdgeColouring.gale_shapley, ListEdgeColouring.galvin, ListEdgeColouring.dinitz, GalvinMultigraph.galvin_of_degree_bound, GalvinMultigraph.galvin, GalvinMultigraph.konig, GalvinMultigraph.degree_bounds_of_proper, GalvinMultigraph.maxDegree_le_of_proper, GalvinMultigraph.colorable_iff, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce, Nat, String, String.mk, Char, optParam, autoParam, semiOutParam, outParam] from Solution
+Running nanoda kernel on solution
+nanoda kernel accepts the solution
+Running Lean default kernel on solution
+Lean default kernel accepts the solution
+Your solution is okay!
