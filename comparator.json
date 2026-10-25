@@ -4,7 +4,13 @@
   "theorem_names": [
     "ListEdgeColouring.gale_shapley",
     "ListEdgeColouring.galvin",
-    "ListEdgeColouring.dinitz"
+    "ListEdgeColouring.dinitz",
+    "GalvinMultigraph.galvin_of_degree_bound",
+    "GalvinMultigraph.galvin",
+    "GalvinMultigraph.konig",
+    "GalvinMultigraph.degree_bounds_of_proper",
+    "GalvinMultigraph.maxDegree_le_of_proper",
+    "GalvinMultigraph.colorable_iff"
   ],
   "definition_names": [],
   "permitted_axioms": [

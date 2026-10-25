@@ -5,7 +5,10 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
-public import Mathlib
+public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import Mathlib.Combinatorics.SimpleGraph.LineGraph
+public import Mathlib.Tactic.Push
+public import Mathlib.Tactic.Choose
 
 /-!
 # List colourings from kernels
