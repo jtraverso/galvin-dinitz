@@ -5,7 +5,8 @@ Author and maintainer: **Juan Pablo Traverso Gianini**. License: Apache-2.0.
 This extension removes the simple-graph restriction from the Galvin development
 registered as [PALOMAR-2026-10-18-000029, version 1](https://palomar-registry.org/entry.html?id=PALOMAR-2026-10-18-000029&version=1).
 The previous Gale–Shapley, simple-graph Galvin and Dinitz statements and their
-proofs are retained. The multigraph extension has not yet been registered.
+proofs are retained. The multigraph extension, including the Borodin–Kostochka–Woodall theorem
+for local lists, is submitted as version 2.
 
 Galvin's classical theorem says that finite bipartite multigraphs can be
 properly edge-colored from arbitrary finite lists of at least the maximum
@@ -38,7 +39,7 @@ The original declarations remain in namespace `ListEdgeColouring`:
 - `galvin`: list edge coloring of finite bipartite simple graphs.
 - `dinitz`: choosing symbols with distinct rows and columns from an n × n array of lists.
 
-Six additional declarations are in namespace `GalvinMultigraph`:
+Seven additional declarations are in namespace `GalvinMultigraph`:
 
 | Declaration | Content |
 | --- | --- |
@@ -48,6 +49,7 @@ Six additional declarations are in namespace `GalvinMultigraph`:
 | `degree_bounds_of_proper` | Any finite palette supporting a proper coloring has size at least each incidence degree. |
 | `maxDegree_le_of_proper` | Any such palette has size at least Δ. |
 | `colorable_iff` | A proper edge coloring into `Fin k` exists exactly when Δ ≤ k. |
+| `galvin_local` | **Borodin–Kostochka–Woodall:** lists whose size at each edge is at least the larger degree of its two ends suffice. |
 
 The list colors may belong to an arbitrary type. Empty edge sets and Δ = 0 are
 included. The lower bounds plus the list-coloring theorem establish optimality
@@ -83,6 +85,15 @@ This is a reduction built on the existing formalization, not a claim that the
 multigraph proof follows the original paper line by line. The retained simple
 case uses stable matchings, the kernel lemma, Galvin's orientation and Kőnig's theorem.
 
+**Local lists (`galvin_local`).** Here the gadget does not apply, since list sizes vary from edge to
+edge. `GalvinMultigraph/Local/` follows the Borodin–Kostochka–Woodall argument directly on the
+multigraph: stable matchings for edge rankings (`Stable`), Kőnig's colouring of edge subsets with
+bounded degrees (`Konig`), rankings of the edges at the two sides whose slack absorbs the local
+excess of the larger degree (`Ranks`), and the Galvin orientation of the line graph, which is
+kernel-perfect (`Main`). The kernel lemma is the registered `Galvin.exists_listColoring`
+(`Local/Kernel.lean`), and `Local/Bridge.lean` transports the colours of the lists to natural
+numbers and back. These modules come from the author's Erdős #81 Paper V formalization.
+
 ## Build and check
 
 Lean `v4.35.0-rc3`; Mathlib `c55e6e786f49471c72fbddbec5415808896aec1e`.
@@ -95,8 +106,8 @@ lake env lean Audit.lean
 lake comparator --config comparator.json
 ```
 
-`Challenge.lean` imports only Mathlib and has nine intentional statement
-placeholders. `Solution.lean` never imports it. Comparator compares all nine
+`Challenge.lean` imports only Mathlib and has ten intentional statement
+placeholders. `Solution.lean` never imports it. Comparator compares all ten
 theorems and their transitive definitions, rejects `sorryAx` in the proofs,
 and requires both Lean and NanoDa kernel acceptance. Only `propext`,
 `Classical.choice` and `Quot.sound` are permitted. See `VERIFICATION.md`.
@@ -108,6 +119,9 @@ and requires both Lean and NanoDa kernel acceptance. Only `propext`,
 - D. Gale and L. S. Shapley, *College admissions and the stability of marriage*,
   American Mathematical Monthly 69 (1962), 9–15,
   [doi:10.1080/00029890.1962.11989827](https://doi.org/10.1080/00029890.1962.11989827).
+- O. V. Borodin, A. V. Kostochka and D. R. Woodall, *List edge and list total colourings of
+  multigraphs*, JCTB 71 (1997), 184–204,
+  [doi:10.1006/jctb.1997.1780](https://doi.org/10.1006/jctb.1997.1780).
 
 The previous development reports proofs produced by Harmonic's Aristotle with
 planning, integration and review in Claude Code. OpenAI Codex developed the
@@ -115,4 +129,6 @@ multigraph reduction, proofs, boundary checks and updated packaging under the
 author's direction. No new Aristotle run was used for the extension. Its
 checks and self-assessment were performed in the same session that wrote it;
 no independent human mathematical review of the extension has been performed.
+The Borodin–Kostochka–Woodall theorem was added with Claude (Claude Code): the rank engine comes
+from the author's Paper V formalization, with its own kernel lemma replaced by the registered one.
 The detailed structured provenance is in `formalization.yaml`.

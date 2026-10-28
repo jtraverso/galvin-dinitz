@@ -6,3 +6,4 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import GalvinMultigraph.Main
+public import GalvinMultigraph.Local.Bridge

@@ -10,7 +10,8 @@
     "GalvinMultigraph.konig",
     "GalvinMultigraph.degree_bounds_of_proper",
     "GalvinMultigraph.maxDegree_le_of_proper",
-    "GalvinMultigraph.colorable_iff"
+    "GalvinMultigraph.colorable_iff",
+    "GalvinMultigraph.galvin_local"
   ],
   "definition_names": [],
   "permitted_axioms": [

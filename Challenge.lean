@@ -125,4 +125,12 @@ theorem colorable_iff [Fintype A] [Fintype B] [Finite E]
     (∃ c : E → Fin k, Proper a b c) ↔ maxDegree a b ≤ k := by
   sorry
 
+/-- Borodin–Kostochka–Woodall (1997): lists whose size at each edge is at least the larger degree
+of its two ends admit a proper list edge coloring of the finite bipartite multigraph. -/
+theorem galvin_local [Finite A] [Finite B] [Finite E]
+    (a : E → A) (b : E → B) (L : E → Finset Color)
+    (hL : ∀ e, max (Nat.card {f // a f = a e}) (Nat.card {f // b f = b e}) ≤ (L e).card) :
+    ∃ c : E → Color, (∀ e, c e ∈ L e) ∧ Proper a b c := by
+  sorry
+
 end GalvinMultigraph

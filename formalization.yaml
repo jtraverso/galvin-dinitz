@@ -5,7 +5,8 @@ project:
   description: 'A Lean 4 / Mathlib formalization of Galvin’s theorem for finite bipartite multigraphs:
     every assignment of finite edge lists of size at least the maximum incidence degree admits a proper
     edge coloring, with parallel edges counted separately. It includes ordinary edge coloring with Δ
-    colors and the matching lower bound. The previously registered simple-graph Galvin theorem, Dinitz
+    colors and the matching lower bound, and the Borodin–Kostochka–Woodall theorem for local lists
+    (lists of size at least the larger degree of the two ends of each edge suffice). The previously registered simple-graph Galvin theorem, Dinitz
     problem and Gale–Shapley stable matching theorem are retained.'
   authors:
   - Juan Pablo Traverso Gianini
@@ -31,6 +32,20 @@ sources:
     Dinitz consequence. The multigraph extension is derived by a palette-synchronizing simple-graph
     gadget reduction to the previously formalized simple case, rather than by transcribing the paper’s
     proof.
+  license: all rights reserved
+  author_endorsement: n/a
+- title: List Edge and List Total Colourings of Multigraphs
+  authors:
+  - O. V. Borodin
+  - A. V. Kostochka
+  - D. R. Woodall
+  id: doi:10.1006/jctb.1997.1780
+  type: paper
+  location: Journal of Combinatorial Theory, Series B 71 (1997), 184–204
+  relationship: formalizes
+  note: The local-list strengthening of Galvin's theorem for bipartite multigraphs (lists of size at
+    least max(d(u), d(v)) at each edge uv), proved directly on the multigraph by rankings of the edges
+    and the Galvin orientation.
   license: all rights reserved
   author_endorsement: n/a
 - title: College Admissions and the Stability of Marriage
@@ -59,12 +74,13 @@ related_formalizations:
   relationship: independent
   note: The same author's Häggkvist–Janssen entry on the list chromatic index of complete graphs.
 status:
-  scope: 'Nine compared theorems: the three retained simple-graph/stable-matching/Dinitz results, plus
-    six multigraph results in GalvinMultigraph. Multigraphs are represented by finite edge identifiers
+  scope: 'Ten compared theorems: the three retained simple-graph/stable-matching/Dinitz results, plus
+    seven multigraph results in GalvinMultigraph (including the Borodin–Kostochka–Woodall local-list
+    theorem). Multigraphs are represented by finite edge identifiers
     and endpoint maps to the two finite sides. No endpoint-pair injectivity is assumed. Degrees count
     identifiers with multiplicity. Lists are finite sets over any color type. Empty edge sets, empty
     sides and zero maximum degree are included. No full coverage of every assertion in the source papers
-    is claimed. The sorry counts refer to Solution proofs; Challenge has nine intentional theorem placeholders
+    is claimed. The sorry counts refer to Solution proofs; Challenge has ten intentional theorem placeholders
     and no definition holes.'
   sorry_count: 0
   sorry_in_definitions: 0
@@ -103,6 +119,22 @@ automation:
       for this extension.
     prompting_notes: Spanish natural-language instructions from the author; the next item in the effort-prioritized
       backlog.
+  - method: agent
+    models:
+    - Claude Opus 5.5
+    framework: Claude Code (Anthropic)
+    tool_setup: >-
+      Added the Borodin–Kostochka–Woodall theorem (galvin_local). Its rank engine (modules
+      GalvinMultigraph/Local/Base, Stable, Konig, Ranks, Main) is taken from the author's Erdős #81 Paper
+      V formalization with namespaces and imports renamed; its kernel lemma was replaced by the registered
+      Galvin.exists_listColoring (Local/Kernel), and Local/Bridge transports list colours to ℕ. Checked
+      with lake build, a pp.all comparison of the ten Challenge/Solution declarations and #print axioms
+      (Lean v4.35.0-rc3, Mathlib c55e6e786f49471c72fbddbec5415808896aec1e).
+    cost:
+      wall_time: about one hour
+      spend_usd: subscription-based
+      hardware: local machine
+    prompting_notes: Natural-language instructions in Spanish, directed by the author.
   notes: The results were chosen by the human author; the Lean proofs are AI-generated and mechanically
     verified (no `sorry`, axioms limited to propext, Classical.choice and Quot.sound, identical elaborated
     types for the Challenge/Solution pair). The first two method entries describe the inherited version-1
@@ -117,7 +149,9 @@ fidelity:
     theorem assumes only finite A, B and E; the explicit maximum-degree interface carries enumerations
     of the two sides. The proof reduces to the existing simple theorem via K_{k,k} minus an edge, with
     lists shrunk to k colors; it is not a direct transcription of the original multigraph argument.
-    The empty-edge case is handled separately. The lower bound and coloring equivalence express the
+    The empty-edge case is handled separately. The local-list theorem galvin_local states the
+    list-size condition edge by edge with the same Nat.card degrees, and is proved directly on the
+    multigraph rather than through the gadget. The lower bound and coloring equivalence express the
     optimal threshold without a separate numerical list-chromatic-index definition. The three original
     interfaces are retained unchanged in type. No custom axioms or additional hypotheses on edge multiplicity
     are introduced.'
@@ -129,7 +163,9 @@ review:
     libraries without warnings, ran boundary examples including distinct parallel edges that cannot
     share one color, and ran Comparator over all nine declarations with Lean and NanoDa acceptance.
     This is not independent review. No independent human mathematical review of the extension has been
-    performed. The original metadata reports Claude Code review of the inherited version-1 development;
+    performed. The Borodin–Kostochka–Woodall addition was checked by Claude Opus 5.5 (pp.all comparison,
+    axioms); this too is not independent human review. The original metadata reports Claude Code review
+    of the inherited version-1 development;
     that does not constitute a separate review of the extension. No mathematical novelty or formalization
     priority is claimed.
 alignment:
@@ -168,6 +204,10 @@ alignment:
     status: proved
   - source: 'Finite bipartite multigraph edge coloring: colorable_iff'
     lean: GalvinMultigraph.colorable_iff
+    module: Challenge
+    status: proved
+  - source: 'Borodin–Kostochka–Woodall (1997): local lists of size max(d(u), d(v)) suffice'
+    lean: GalvinMultigraph.galvin_local
     module: Challenge
     status: proved
 acknowledgements: Mathlib and the Lean community; Harmonic's Aristotle.
