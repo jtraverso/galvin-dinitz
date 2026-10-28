@@ -20,7 +20,7 @@ every arc.
 
 namespace GalvinMultigraph.Local
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [Fintype V]
 
 /-- `K` is a kernel of the sub-digraph induced by `S`: independent, and every vertex
 of `S ∖ K` has an out-neighbour in `K`. -/

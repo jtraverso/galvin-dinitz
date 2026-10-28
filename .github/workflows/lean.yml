@@ -20,5 +20,5 @@ jobs:
           build-args: "--wfail"
       - name: Compile independent Challenge
         run: lake build Challenge
-      - name: Audit all nine results and boundary cases
+      - name: Audit all ten results and boundary cases
         run: lake env lean Audit.lean

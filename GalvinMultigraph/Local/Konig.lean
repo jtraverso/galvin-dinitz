@@ -3,23 +3,6 @@ Copyright (c) 2026 Juan Pablo Traverso Gianini. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Juan Pablo Traverso Gianini
 -/
-
-/-
-PROVENANCE (Paper V). Returned by Aristotle, project `c2f11738-cc7c-4694-9186-da436d43ee7f`
-(gate GALVIN-BKW-LOCAL, 2026-09-14), homed into the Erdős #81 Paper V formalization, then into this library
-(`GalvinMultigraph/Local/`) with namespaces and imports renamed and
-no other change; re-verified against the pinned Mathlib by the Paper V build and aggregate gate.
-Provenance is not correctness: only the gates below certify these declarations.
--/
-/-
-Paper V, gate GALVIN-BKW-LOCAL — Kőnig's edge colouring theorem for bipartite MULTIGRAPHS.
-
-Multigraph analogue of Kőnig's edge colouring theorem: a set of edges with all degrees at most
-`Δ` decomposes into `Δ` matchings.  The proof follows the simple-graph one: Hall's theorem produces
-a matching saturating the left vertices of degree `Δ` and one saturating the right vertices of
-degree `Δ`, the two are merged (Mendelsohn–Dulmage, via stable matchings), and the resulting
-matching is removed as one colour class.
--/
 module
 
 public import GalvinMultigraph.Local.Stable
@@ -32,7 +15,27 @@ import Mathlib.Tactic.Set
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Group.Action.Defs
 
+/-!
+# Kőnig's edge colouring theorem for bipartite multigraphs
+
+Multigraph analogue of Kőnig's edge colouring theorem: a set of edges with all degrees at most
+`Δ` decomposes into `Δ` matchings.  The proof follows the simple-graph one: Hall's theorem produces
+a matching saturating the left vertices of degree `Δ` and one saturating the right vertices of
+degree `Δ`, the two are merged (Mendelsohn–Dulmage, via stable matchings), and the resulting
+matching is removed as one colour class.
+
+These modules come from the author's Erdős #81 Paper V formalization (proofs produced by Harmonic's
+Aristotle, then integrated and checked); only names, imports and documentation were changed here.
+-/
+
 @[expose] public section
+
+-- The statements keep the finiteness and decidability instances of the section variables, which
+-- the proofs use.
+set_option linter.unusedDecidableInType false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedSectionVars false
+
 
 namespace GalvinMultigraph.Local
 
@@ -160,14 +163,14 @@ lemma merge_matchings (left : E → U) (right : E → R) (S ML MR : Finset E)
   have hpuinj : ∀ e f, pu e = pu f → e = f := by
     intro e f h
     by_cases he : e ∈ ML <;> by_cases hf : f ∈ ML <;>
-      simp only [hpu, he, hf, if_true, if_false] at h <;>
+      simp only [hpu, he, hf, ite_true, ite_false] at h <;>
       first
         | exact hidxinj (by omega)
         | (exfalso; have := hidxlt e; have := hidxlt f; omega)
   have hprinj : ∀ e f, pr e = pr f → e = f := by
     intro e f h
     by_cases he : e ∈ MR <;> by_cases hf : f ∈ MR <;>
-      simp only [hpr, he, hf, if_true, if_false] at h <;>
+      simp only [hpr, he, hf, ite_true, ite_false] at h <;>
       first
         | exact hidxinj (by omega)
         | (exfalso; have := hidxlt e; have := hidxlt f; omega)
@@ -286,12 +289,12 @@ theorem konig_multigraph (left : E → U) (right : E → R) (S : Finset E) (Δ :
         · exact (hM e heM f hfM hne).1 h
         · exact (hM e heM f hfM hne).2 h
       · have := hφ'lt f (Finset.mem_sdiff.mpr ⟨hf, hfM⟩)
-        simp only [heM, hfM, if_true, if_false]
+        simp only [heM, hfM, ite_true, ite_false]
         omega
       · have := hφ'lt e (Finset.mem_sdiff.mpr ⟨he, heM⟩)
-        simp only [heM, hfM, if_true, if_false]
+        simp only [heM, hfM, ite_true, ite_false]
         omega
-      · simp only [heM, hfM, if_false]
+      · simp only [heM, hfM, ite_false]
         exact hφ' e (Finset.mem_sdiff.mpr ⟨he, heM⟩) f (Finset.mem_sdiff.mpr ⟨hf, hfM⟩) hne hadj
 
 end GalvinMultigraph.Local

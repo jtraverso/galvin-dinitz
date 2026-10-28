@@ -3,28 +3,30 @@ Copyright (c) 2026 Juan Pablo Traverso Gianini. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Juan Pablo Traverso Gianini
 -/
-
-/-
-PROVENANCE (Paper V). Returned by Aristotle, project `c2f11738-cc7c-4694-9186-da436d43ee7f`
-(gate GALVIN-BKW-LOCAL, 2026-09-14), homed into the Erdős #81 Paper V formalization, then into this library
-(`GalvinMultigraph/Local/`) with namespaces and imports renamed and
-no other change; re-verified against the pinned Mathlib by the Paper V build and aggregate gate.
-Provenance is not correctness: only the gates below certify these declarations.
--/
-/-
-Paper V, gate GALVIN-BKW-LOCAL — shared vocabulary for bipartite MULTIGRAPHS.
-
-A bipartite multigraph is an edge type `E` together with endpoint maps `left : E → U` and
-`right : E → R`; parallel edges are distinct `e ≠ f` with `left e = left f` and `right e = right f`.
--/
-
 module
 
 public import Mathlib.Combinatorics.Hall.Basic
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Order.Interval.Finset.Nat
 
+/-!
+# Bipartite multigraphs: matchings and degrees in edge sets
+
+A bipartite multigraph is an edge type `E` together with endpoint maps `left : E → U` and
+`right : E → R`; parallel edges are distinct `e ≠ f` with `left e = left f` and `right e = right f`.
+
+These modules come from the author's Erdős #81 Paper V formalization (proofs produced by Harmonic's
+Aristotle, then integrated and checked); only names, imports and documentation were changed here.
+-/
+
 @[expose] public section
+
+-- The statements keep the finiteness and decidability instances of the section variables, which
+-- the proofs use.
+set_option linter.unusedDecidableInType false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedSectionVars false
+
 
 namespace GalvinMultigraph.Local
 

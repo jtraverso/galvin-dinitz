@@ -3,16 +3,19 @@ Copyright (c) 2026 Juan Pablo Traverso Gianini. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Juan Pablo Traverso Gianini
 -/
+module
 
-/-
-PROVENANCE (Paper V). Returned by Aristotle, project `c2f11738-cc7c-4694-9186-da436d43ee7f`
-(gate GALVIN-BKW-LOCAL, 2026-09-14), homed into the Erdős #81 Paper V formalization, then into this library
-(`GalvinMultigraph/Local/`) with namespaces and imports renamed and
-no other change; re-verified against the pinned Mathlib by the Paper V build and aggregate gate.
-Provenance is not correctness: only the gates below certify these declarations.
--/
-/-
-Paper V, gate GALVIN-BKW-LOCAL — the rank construction behind Borodin–Kostochka–Woodall.
+public import GalvinMultigraph.Local.Konig
+
+import Lean.Elab.Tactic.Omega
+import Mathlib.Tactic.Choose
+import Mathlib.Tactic.Ext
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Push
+import Mathlib.Tactic.Set
+
+/-!
+# The rank construction behind Borodin–Kostochka–Woodall
 
 Galvin's method needs, at every vertex of the bipartite multigraph, a linear order of the incident
 edges.  For the *local* list sizes `max (d u) (d v)` the orders must be chosen so that for every
@@ -29,19 +32,19 @@ both of its endpoints, in the second case at the *top*; either way the required 
 preserved.  `ranks_exist` runs the induction in the generality needed for it to go through: each
 vertex is given an arbitrary starting position `a`, and the invariant is that both the bottom and
 the top of the two intervals of an edge are correctly related.
+
+These modules come from the author's Erdős #81 Paper V formalization (proofs produced by Harmonic's
+Aristotle, then integrated and checked); only names, imports and documentation were changed here.
 -/
-module
-
-public import GalvinMultigraph.Local.Konig
-
-import Lean.Elab.Tactic.Omega
-import Mathlib.Tactic.Choose
-import Mathlib.Tactic.Ext
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Push
-import Mathlib.Tactic.Set
 
 @[expose] public section
+
+-- The statements keep the finiteness and decidability instances of the section variables, which
+-- the proofs use.
+set_option linter.unusedDecidableInType false
+set_option linter.unusedFintypeInType false
+set_option linter.unusedSectionVars false
+
 
 namespace GalvinMultigraph.Local
 
@@ -223,7 +226,7 @@ lemma matching_dichotomy (left : E → U) (right : E → R) (S : Finset E) (hS :
       hall_matching left right S (S.image left) ⟨left e0, Finset.mem_image_of_mem _ he0⟩ hall
     exact ⟨M, hMS, hMne, hM, Or.inl fun e he => hcov (left e) (Finset.mem_image_of_mem _ he)⟩
   · -- Hall's condition fails: a minimal violating set minus one vertex is tight.
-    push_neg at hall
+    push Not at hall
     obtain ⟨B0, hB0sub, hB0⟩ := hall
     set bad : Finset (Finset U) :=
       (Finset.univ : Finset (Finset U)).filter
@@ -255,7 +258,7 @@ lemma matching_dichotomy (left : E → U) (right : E → R) (S : Finset E) (hS :
     have hall' : ∀ B ⊆ A', B.card ≤ (B.biUnion nbr).card := by
       intro B hB
       by_contra hlt
-      push_neg at hlt
+      push Not at hlt
       have hBbad : B ∈ bad := by
         refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, (hB.trans hA'sub).trans hAsub, hlt⟩
       have := hAmin B hBbad
@@ -263,7 +266,8 @@ lemma matching_dichotomy (left : E → U) (right : E → R) (S : Finset E) (hS :
       omega
     obtain ⟨M, hMS, hMne, hM, hcov, hleftmem, himgsub, hcardge⟩ :=
       hall_matching left right S A' hA'ne hall'
-    have hNsub : A'.biUnion nbr ⊆ A.biUnion nbr := Finset.biUnion_subset_biUnion_of_subset_left _ hA'sub
+    have hNsub : A'.biUnion nbr ⊆ A.biUnion nbr := Finset.biUnion_subset_biUnion_of_subset_left _
+        hA'sub
     have hNcard : (A'.biUnion nbr).card ≤ (M.image right).card := by
       have := Finset.card_le_card hNsub
       omega
@@ -343,7 +347,7 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
         intro e he
         have hx : (∃ m ∈ M, left m = left e) := hcovL e he
         have := h1 e (Finset.mem_sdiff.mp he).1
-        simp only [haL', haR', hx, if_true]
+        simp only [haL', haR', hx, ite_true]
         split <;> omega
       have h2' : ∀ e ∈ S \ M, aR' (right e) + degROn right (S \ M) (right e)
           ≤ aL' (left e) + degLOn left (S \ M) (left e) + c e := by
@@ -351,42 +355,42 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
         have hx : (∃ m ∈ M, left m = left e) := hcovL e he
         have hxd := hdLcov (left e) hx
         have hb := h2 e (Finset.mem_sdiff.mp he).1
-        simp only [haL', haR', hx, if_true]
+        simp only [haL', haR', hx, ite_true]
         by_cases hy : (∃ m ∈ M, right m = right e)
         · have hyd := hdRcov (right e) hy
-          simp only [hy, if_true]
+          simp only [hy, ite_true]
           omega
-        · have hyd := hdR0 (right e) (by push_neg at hy; intro m hm; exact hy m hm)
-          simp only [hy, if_false]
+        · have hyd := hdR0 (right e) (by push Not at hy; intro m hm; exact hy m hm)
+          simp only [hy, ite_false]
           omega
       obtain ⟨pL', pR', hbL', hbR', hiL', hiR', hc'⟩ := ih (S \ M) hssub aL' aR' h1' h2'
       refine ⟨fun e => if e ∈ M then aL (left e) else pL' e,
               fun e => if e ∈ M then aR (right e) else pR' e, ?_, ?_, ?_, ?_, ?_⟩
       · intro e he
         by_cases hem : e ∈ M
-        · simp only [hem, if_true]
+        · simp only [hem, ite_true]
           have := degLOn_pos left he
           omega
         · have heS : e ∈ S \ M := Finset.mem_sdiff.mpr ⟨he, hem⟩
           have hx : (∃ m ∈ M, left m = left e) := hcovL e heS
           have hxd := hdLcov (left e) hx
           have := hbL' e heS
-          simp only [hem, if_false, haL', hx, if_true] at this ⊢
+          simp only [hem, ite_false, haL', hx, ite_true] at this ⊢
           omega
       · intro e he
         by_cases hem : e ∈ M
-        · simp only [hem, if_true]
+        · simp only [hem, ite_true]
           have := degROn_pos right he
           omega
         · have heS : e ∈ S \ M := Finset.mem_sdiff.mpr ⟨he, hem⟩
           have hb := hbR' e heS
-          simp only [hem, if_false]
+          simp only [hem, ite_false]
           by_cases hy : (∃ m ∈ M, right m = right e)
           · have hyd := hdRcov (right e) hy
-            simp only [haR', hy, if_true] at hb
+            simp only [haR', hy, ite_true] at hb
             omega
-          · have hyd := hdR0 (right e) (by push_neg at hy; intro m hm; exact hy m hm)
-            simp only [haR', hy, if_false] at hb
+          · have hyd := hdR0 (right e) (by push Not at hy; intro m hm; exact hy m hm)
+            simp only [haR', hy, ite_false] at hb
             omega
       · intro e he f hf hlef hval
         by_cases hem : e ∈ M <;> by_cases hfm : f ∈ M
@@ -396,19 +400,19 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hfS : f ∈ S \ M := Finset.mem_sdiff.mpr ⟨hf, hfm⟩
           have hx : (∃ m ∈ M, left m = left f) := hcovL f hfS
           have hb := (hbL' f hfS).1
-          simp only [hem, if_true, hfm, if_false] at hval
-          simp only [haL', hx, if_true] at hb
+          simp only [hem, ite_true, hfm, ite_false] at hval
+          simp only [haL', hx, ite_true] at hb
           rw [hlef] at hval
           omega
         · exfalso
           have heS : e ∈ S \ M := Finset.mem_sdiff.mpr ⟨he, hem⟩
           have hx : (∃ m ∈ M, left m = left e) := hcovL e heS
           have hb := (hbL' e heS).1
-          simp only [hem, if_false, hfm, if_true] at hval
-          simp only [haL', hx, if_true] at hb
+          simp only [hem, ite_false, hfm, ite_true] at hval
+          simp only [haL', hx, ite_true] at hb
           rw [← hlef] at hval
           omega
-        · simp only [hem, if_false, hfm, if_false] at hval
+        · simp only [hem, ite_false, hfm, ite_false] at hval
           exact hiL' e (Finset.mem_sdiff.mpr ⟨he, hem⟩) f (Finset.mem_sdiff.mpr ⟨hf, hfm⟩) hlef hval
       · intro e he f hf hlef hval
         by_cases hem : e ∈ M <;> by_cases hfm : f ∈ M
@@ -418,25 +422,25 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hfS : f ∈ S \ M := Finset.mem_sdiff.mpr ⟨hf, hfm⟩
           have hy : (∃ m ∈ M, right m = right f) := ⟨e, hem, hlef⟩
           have hb := (hbR' f hfS).1
-          simp only [hem, if_true, hfm, if_false] at hval
-          simp only [haR', hy, if_true] at hb
+          simp only [hem, ite_true, hfm, ite_false] at hval
+          simp only [haR', hy, ite_true] at hb
           rw [hlef] at hval
           omega
         · exfalso
           have heS : e ∈ S \ M := Finset.mem_sdiff.mpr ⟨he, hem⟩
           have hy : (∃ m ∈ M, right m = right e) := ⟨f, hfm, hlef.symm⟩
           have hb := (hbR' e heS).1
-          simp only [hem, if_false, hfm, if_true] at hval
-          simp only [haR', hy, if_true] at hb
+          simp only [hem, ite_false, hfm, ite_true] at hval
+          simp only [haR', hy, ite_true] at hb
           rw [← hlef] at hval
           omega
-        · simp only [hem, if_false, hfm, if_false] at hval
+        · simp only [hem, ite_false, hfm, ite_false] at hval
           exact hiR' e (Finset.mem_sdiff.mpr ⟨he, hem⟩) f (Finset.mem_sdiff.mpr ⟨hf, hfm⟩) hlef hval
       · intro e he
         by_cases hem : e ∈ M
-        · simp only [hem, if_true]
+        · simp only [hem, ite_true]
           exact h1 e he
-        · simp only [hem, if_false]
+        · simp only [hem, ite_false]
           exact hc' e (Finset.mem_sdiff.mpr ⟨he, hem⟩)
     · -- Case B: neighbours of covered left vertices are covered; place `M` at the top.
       have h1' : ∀ e ∈ S \ M, aR (right e) ≤ aL (left e) + c e :=
@@ -451,7 +455,7 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hxd := hdLcov (left e) hx
           have hyd := hdRcov (right e) hy
           omega
-        · have hxd := hdL0 (left e) (by push_neg at hx; intro m hm; exact hx m hm)
+        · have hxd := hdL0 (left e) (by push Not at hx; intro m hm; exact hx m hm)
           have hyd := hdRle (right e)
           omega
       obtain ⟨pL', pR', hbL', hbR', hiL', hiR', hc'⟩ := ih (S \ M) hssub aL aR h1' h2'
@@ -460,21 +464,21 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
               ?_, ?_, ?_, ?_, ?_⟩
       · intro e he
         by_cases hem : e ∈ M
-        · simp only [hem, if_true]
+        · simp only [hem, ite_true]
           have := degLOn_pos left he
           omega
         · have := hbL' e (Finset.mem_sdiff.mpr ⟨he, hem⟩)
           have hle := hdLle (left e)
-          simp only [hem, if_false]
+          simp only [hem, ite_false]
           omega
       · intro e he
         by_cases hem : e ∈ M
-        · simp only [hem, if_true]
+        · simp only [hem, ite_true]
           have := degROn_pos right he
           omega
         · have := hbR' e (Finset.mem_sdiff.mpr ⟨he, hem⟩)
           have hle := hdRle (right e)
-          simp only [hem, if_false]
+          simp only [hem, ite_false]
           omega
       · intro e he f hf hlef hval
         by_cases hem : e ∈ M <;> by_cases hfm : f ∈ M
@@ -485,7 +489,7 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hx : (∃ m ∈ M, left m = left f) := ⟨e, hem, hlef⟩
           have hxd := hdLcov (left f) hx
           have := (hbL' f hfS).2
-          simp only [hem, if_true, hfm, if_false] at hval
+          simp only [hem, ite_true, hfm, ite_false] at hval
           rw [hlef] at hval
           omega
         · exfalso
@@ -493,10 +497,10 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hx : (∃ m ∈ M, left m = left e) := ⟨f, hfm, hlef.symm⟩
           have hxd := hdLcov (left e) hx
           have := (hbL' e heS).2
-          simp only [hem, if_false, hfm, if_true] at hval
+          simp only [hem, ite_false, hfm, ite_true] at hval
           rw [← hlef] at hval
           omega
-        · simp only [hem, if_false, hfm, if_false] at hval
+        · simp only [hem, ite_false, hfm, ite_false] at hval
           exact hiL' e (Finset.mem_sdiff.mpr ⟨he, hem⟩) f (Finset.mem_sdiff.mpr ⟨hf, hfm⟩) hlef hval
       · intro e he f hf hlef hval
         by_cases hem : e ∈ M <;> by_cases hfm : f ∈ M
@@ -507,7 +511,7 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hy : (∃ m ∈ M, right m = right f) := ⟨e, hem, hlef⟩
           have hyd := hdRcov (right f) hy
           have := (hbR' f hfS).2
-          simp only [hem, if_true, hfm, if_false] at hval
+          simp only [hem, ite_true, hfm, ite_false] at hval
           rw [hlef] at hval
           omega
         · exfalso
@@ -515,19 +519,19 @@ theorem ranks_exist (left : E → U) (right : E → R) (c : E → ℕ) (S : Fins
           have hy : (∃ m ∈ M, right m = right e) := ⟨f, hfm, hlef.symm⟩
           have hyd := hdRcov (right e) hy
           have := (hbR' e heS).2
-          simp only [hem, if_false, hfm, if_true] at hval
+          simp only [hem, ite_false, hfm, ite_true] at hval
           rw [← hlef] at hval
           omega
-        · simp only [hem, if_false, hfm, if_false] at hval
+        · simp only [hem, ite_false, hfm, ite_false] at hval
           exact hiR' e (Finset.mem_sdiff.mpr ⟨he, hem⟩) f (Finset.mem_sdiff.mpr ⟨hf, hfm⟩) hlef hval
       · intro e he
         by_cases hem : e ∈ M
-        · simp only [hem, if_true]
+        · simp only [hem, ite_true]
           have hb := h2 e he
           have := degLOn_pos left he
           have := degROn_pos right he
           omega
-        · simp only [hem, if_false]
+        · simp only [hem, ite_false]
           exact hc' e (Finset.mem_sdiff.mpr ⟨he, hem⟩)
 
 end GalvinMultigraph.Local

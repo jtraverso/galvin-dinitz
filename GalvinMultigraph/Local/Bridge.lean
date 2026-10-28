@@ -41,7 +41,7 @@ theorem galvin_local [Finite A] [Finite B] [Finite E]
   have hLS : ∀ e, L e ⊆ S := fun e x hx => mem_biUnion.2 ⟨e, mem_univ e, hx⟩
   have henc : ∀ x ∈ S, ∀ y ∈ S, enc x = enc y → x = y := by
     intro x hx y hy h
-    simp only [enc, dif_pos hx, dif_pos hy] at h
+    simp only [enc, dite_eq_left hx, dite_eq_left hy] at h
     exact congrArg Subtype.val (num.injective (Fin.ext h))
   let L' : E → Finset ℕ := fun e => (L e).image enc
   have hcard : ∀ e, (L' e).card = (L e).card := fun e =>
